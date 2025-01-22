@@ -8,7 +8,7 @@ const ChatSection = () => {
       text: 'The question of whether androids dream of electric sheep is the title and central theme of the science fiction novel Do Androids Dream of Electric Sheep? by Philip K. Dick.',
       isUser: false,
       timestamp: '02:22 AM',
-    }, // 초기 챗봇 메시지
+    },
   ]) // 메시지 목록
   const [inputText, setInputText] = useState('') // 입력된 텍스트
   const messagesEndRef = useRef(null) // 스크롤을 위한 ref
@@ -35,7 +35,7 @@ const ChatSection = () => {
     }
     setMessages((prev) => [...prev, userMessage])
 
-    // 챗봇 응답 추가 (임시 응답)
+    // 챗봇 응답 추가 (사용자 입력 따라하기)
     const botMessage = {
       text: `You said: "${inputText}"`,
       isUser: false,
@@ -49,25 +49,25 @@ const ChatSection = () => {
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-white">
+    <div className="flex flex-1 flex-col bg-gray-50">
       {/* 헤더 */}
-      <Header title="채팅" icon={<img src={Icon} alt="icon" className="h-6 w-6" />} />
+      <Header title="SummarAI" icon={<img src={Icon} alt="icon" className="h-6 w-6" />} />
 
       {/* 메시지 목록 */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
         {messages.map((message, index) => (
           <div
             key={index}
             className={`mb-4 flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[70%] rounded-lg p-3 ${
-                message.isUser ? 'bg-gray-100 text-black' : 'bg-gray-100 text-black'
+              className={`max-w-[70%] rounded-xl p-4 text-sm shadow-md ${
+                message.isUser ? 'bg-blue-500 text-gray-800' : 'bg-gray-200 text-gray-800'
               }`}
             >
               <p>{message.text}</p>
-              <p className="mt-1 text-xs text-gray-400">
-                {message.isUser ? 'You' : 'SummarAl'} {message.timestamp}
+              <p className="mt-1 text-xs text-gray-500">
+                {message.isUser ? 'You' : 'SummarAI'} {message.timestamp}
               </p>
             </div>
           </div>
@@ -77,21 +77,21 @@ const ChatSection = () => {
       </div>
 
       {/* 메시지 입력 필드 */}
-      <div className="border-t border-gray-200 p-4">
-        <div className="flex">
+      <div className="border-t border-gray-300 bg-gray-100 p-4">
+        <div className="flex items-center">
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            placeholder="메시지를 입력하세요..."
-            className="flex-1 rounded-l-lg border border-gray-300 p-2 focus:outline-none"
+            placeholder="Type your message..."
+            className="focus:ring-blue-500 flex-1 rounded-l-lg border border-gray-300 p-3 focus:outline-none focus:ring-2"
           />
           <button
             onClick={handleSendMessage}
-            className="bg-blue-500 hover:bg-blue-600 rounded-r-lg px-4 py-2 text-white"
+            className="hover:bg-blue-600 ml-2 rounded-r-lg bg-gray-200 px-6 py-3 text-sm text-black"
           >
-            전송
+            Send
           </button>
         </div>
       </div>
