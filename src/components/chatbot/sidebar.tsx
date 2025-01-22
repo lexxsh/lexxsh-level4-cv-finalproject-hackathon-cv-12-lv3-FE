@@ -33,23 +33,8 @@ const Sidebar = () => {
               className="flex cursor-pointer items-center justify-between hover:text-gray-400"
               onClick={() => handleMenuClick('chat')}
             >
-              <span>채팅</span>
-              <img src={openMenus.chat ? UpArrow : DownArrow} alt="arrow" className="h-4 w-4" />
+              <span>Home</span>
             </div>
-            {openMenus.chat && (
-              <ul className="mt-2 pl-4 md:pl-0">
-                <li className="mb-2">
-                  <Link to="/chat/room1" className="hover:text-gray-400">
-                    Room 1
-                  </Link>
-                </li>
-                <li className="mb-2">
-                  <Link to="/chat/room2" className="hover:text-gray-400">
-                    Room 2
-                  </Link>
-                </li>
-              </ul>
-            )}
           </li>
 
           {/* 설정 메뉴 */}
@@ -65,12 +50,17 @@ const Sidebar = () => {
               <ul className="mt-2 pl-4 md:pl-0">
                 <li className="mb-2">
                   <Link to="/settings/profile" className="hover:text-gray-400">
-                    프로필
+                    채팅
                   </Link>
                 </li>
                 <li className="mb-2">
                   <Link to="/settings/security" className="hover:text-gray-400">
-                    보안
+                    요약
+                  </Link>
+                </li>
+                <li className="mb-2">
+                  <Link to="/settings/security" className="hover:text-gray-400">
+                    오디오북
                   </Link>
                 </li>
               </ul>
