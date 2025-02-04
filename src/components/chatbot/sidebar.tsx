@@ -15,15 +15,16 @@ const Sidebar = () => {
 
   // 히스토리 리스트
   const historyList = [
-    'Attention All You Need',
-    'Observation of a new boson at a mass of 125 GeV with the',
-    '뉴턴의〈물체의 궤도 운동에 관하여〉에 대한 고찰',
-    '빛의 이중성',
+    { id: 1, title: 'Attention All You Need' },
+    { id: 2, title: 'Observation of a new boson at a mass of 125 GeV with the' },
+    { id: 3, title: '뉴턴의〈물체의 궤도 운동에 관하여〉에 대한 고찰' },
+    { id: 4, title: '빛의 이중성' },
   ]
 
   const toggleHisUp = () => {
     setIsHisUp(!isHisUp) // 상태 토글
   }
+
   const handleItemClick = (index) => {
     setActiveItem(index) // 클릭된 항목의 인덱스를 상태로 저장
   }
@@ -36,16 +37,22 @@ const Sidebar = () => {
       </div>
 
       {/* 메뉴 */}
-      <div className=" mt-3">
-        <div className="cursor-pointer transition-colors hover:bg-gray-200">
-          <img src={New} alt="New" />
-        </div>
-        <div className="cursor-pointer transition-colors hover:bg-gray-200">
-          <img src={Sum} alt="Sum" />
-        </div>
-        <div className="cursor-pointer transition-colors hover:bg-gray-200">
-          <img src={Audio} alt="Audio" />
-        </div>
+      <div className="mt-3">
+        <Link to="/upload">
+          <div className="cursor-pointer transition-colors hover:bg-gray-200">
+            <img src={New} alt="New" />
+          </div>
+        </Link>
+        <Link to="/summary">
+          <div className="cursor-pointer transition-colors hover:bg-gray-200">
+            <img src={Sum} alt="Sum" />
+          </div>
+        </Link>
+        <Link to="/audio">
+          <div className="cursor-pointer transition-colors hover:bg-gray-200">
+            <img src={Audio} alt="Audio" />
+          </div>
+        </Link>
 
         {/* HisUP / HisDOWN */}
         <div onClick={toggleHisUp} className="cursor-pointer transition-all hover:bg-gray-200">
@@ -54,11 +61,11 @@ const Sidebar = () => {
 
         {/* 히스토리 리스트 */}
         {isHisUp && (
-          <div className="mt-0 pl-[1.7rem] ">
-            <ul>
+          <div className="mt-0 pl-[1.7rem]">
+            <ul className="max-w-[200px]">
               {historyList.map((item, index) => (
                 <li
-                  key={index}
+                  key={item.id}
                   onClick={() => handleItemClick(index)}
                   className={`cursor-pointer truncate p-2 text-base text-[#475569] transition-colors hover:opacity-50
                     ${
@@ -67,7 +74,9 @@ const Sidebar = () => {
                         : 'border-l-2 border-gray-200 pl-3'
                     }`}
                 >
-                  {item}
+                  <Link to={`/chat?id=${item.id}`} className="block w-full truncate">
+                    {item.title}
+                  </Link>
                 </li>
               ))}
             </ul>
