@@ -12,12 +12,18 @@ const ChatSection = () => {
   ]) // 메시지 목록
   const [inputText, setInputText] = useState('') // 입력된 텍스트
   const messagesEndRef = useRef(null) // 스크롤을 위한 ref
+  const textareaRef = useRef(null)
 
   // 스크롤을 가장 아래로 이동시키는 함수
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
-
+  const handleInput = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+    }
+  }
   // 메시지가 업데이트될 때마다 스크롤을 아래로 이동
   useEffect(() => {
     scrollToBottom()
@@ -51,7 +57,7 @@ const ChatSection = () => {
   return (
     <div className="flex flex-1 flex-col bg-gray-50">
       {/* 헤더 */}
-      <Header title="SummarAI" icon={<img src={Icon} alt="icon" className="h-6 w-6" />} />
+      <Header padding="p-[1.5rem]" />
 
       {/* 메시지 목록 */}
       <div className="flex-1 overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
@@ -77,23 +83,31 @@ const ChatSection = () => {
       </div>
 
       {/* 메시지 입력 필드 */}
-      <div className="border-t border-gray-300 bg-gray-100 p-4">
-        <div className="flex items-center">
-          <input
-            type="text"
+      <div className="bg-white p-2">
+        <div className="relative flex items-center">
+          <textarea
+            ref={textareaRef}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
+            onInput={handleInput} // 입력할 때마다 높이 자동 조정
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            placeholder="Type your message..."
-            className="focus:ring-blue-500 flex-1 rounded-l-lg border border-gray-300 p-3 focus:outline-none focus:ring-2"
+            placeholder="Message SummarAI..."
+            className="max-h-35 flex-1 resize-none overflow-auto rounded-2xl border border-gray-300 p-3 pl-6 focus:outline-none"
           />
           <button
             onClick={handleSendMessage}
-            className="hover:bg-blue-600 ml-2 rounded-r-lg bg-gray-200 px-6 py-3 text-sm text-black"
+            className="hover:bg-blue-600 absolute right-3 top-1/2 -translate-y-1/2 transform rounded-r-lg bg-gray-200 px-6 py-3 text-sm text-black"
           >
             Send
           </button>
         </div>
+        <p className="mt-2 text-center text-xs text-gray-500">
+          SummarAI can make mistakes. Check our{' '}
+          <a href="#" className="text-black">
+            Terms & Conditions
+          </a>
+          .
+        </p>
       </div>
     </div>
   )
