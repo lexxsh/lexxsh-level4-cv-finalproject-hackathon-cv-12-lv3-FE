@@ -9,6 +9,32 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Fira+Sans:400,400i,500,700"
     />
+
+    <!-- 스타일 추가 -->
+    <style>
+      /* 기본 스크롤바 */
+      ::-webkit-scrollbar {
+        width: 5px; /* 세로 스크롤바의 너비 */
+        height: 5px; /* 가로 스크롤바의 높이 */
+      }
+
+      /* 스크롤바 배경 */
+      ::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+        border-radius: 8px;
+      }
+
+      /* 스크롤바 슬라이더 */
+      ::-webkit-scrollbar-thumb {
+        background-color: #4ba5ff;
+        border-radius: 10px;
+      }
+
+      /* 마우스를 올렸을 때 스크롤바 색상 */
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #0e46ff;
+      }
+    </style>
   </head>
   <body class="bg-gray-100">
     <div id="root"></div>

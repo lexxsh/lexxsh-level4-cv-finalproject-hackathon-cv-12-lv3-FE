@@ -39,7 +39,7 @@ function Hero({
   }
 
   const handleNextPage = () => {
-    navigate('/main')
+    navigate('/upload')
   }
   return (
     <section className={cn('text-center lg:w-full lg:py-20 lg:text-left', className)}>
