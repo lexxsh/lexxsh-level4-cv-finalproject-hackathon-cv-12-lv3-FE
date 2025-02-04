@@ -5,6 +5,8 @@ import HomePage from '@/routes/home'
 import MainPage from '@/routes/main'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ErrorPage from '@/routes/error'
+import UploadPage from '@/routes/upload'
+import ChatPage from '@/routes/chat'
 export default function App() {
   const basename = import.meta.env.BASE_URL
 
@@ -14,6 +16,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="main" element={<MainPage />} />
+          <Route path="upload" element={<UploadPage />} />
+          <Route path="chat" element={<ChatPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="*" element={<ErrorPage />} />
