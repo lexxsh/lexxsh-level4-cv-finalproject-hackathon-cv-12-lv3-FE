@@ -62,7 +62,7 @@ const Sidebar = () => {
         {/* 히스토리 리스트 */}
         {isHisUp && (
           <div className="mt-0 pl-[1.7rem]">
-            <ul>
+            <ul className="max-w-[200px]">
               {historyList.map((item, index) => (
                 <li
                   key={item.id}
@@ -74,7 +74,7 @@ const Sidebar = () => {
                         : 'border-l-2 border-gray-200 pl-3'
                     }`}
                 >
-                  <Link to={`/chat?id=${item.id}`} className="block w-full">
+                  <Link to={`/chat?id=${item.id}`} className="block w-full truncate">
                     {item.title}
                   </Link>
                 </li>
