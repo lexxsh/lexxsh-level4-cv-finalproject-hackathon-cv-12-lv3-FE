@@ -1,9 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom' // Link 추가
+import { useState, useEffect } from 'react'
 import Card from '@/components/Card_box/card'
 import Sidebar from '@/components/chatbot/sidebar'
 import Header from '@/components/chatbot/chatbot_header'
+import Pagination from 'react-js-pagination'
+import '@/assets/summary/pagination.css'
 
+import AudioIcon from '@/assets/audio/AudioIcon.png'
 import Img1 from '@/assets/summary/page_3_img_1.png'
 import Img2 from '@/assets/summary/page_4_img_1.png'
 import Img3 from '@/assets/summary/page_4_img_2.png'
@@ -95,7 +99,48 @@ const Audio = () => {
       description: '인공지능 - 머신러닝',
       image: Img3,
     },
+    {
+      id: 13,
+      tags: ['#KNN', '#ML'],
+      title: 'K-Nearest Neighbors',
+      description: '인공지능 - 머신러닝',
+      image: Img1,
+    },
+    {
+      id: 14,
+      tags: ['#KNN', '#ML'],
+      title: 'K-Nearest Neighbors',
+      description: '인공지능 - 머신러닝',
+      image: Img2,
+    },
+    {
+      id: 15,
+      tags: ['#KNN', '#ML'],
+      title: 'K-Nearest Neighbors',
+      description: '인공지능 - 머신러닝',
+      image: Img3,
+    },
   ]
+
+  const [page, setPage] = useState(1)
+  const [curCardList, setCurCardList] = useState<any[]>([])
+
+  const itemPerPage = 12
+  const indexOfLastCard = page * itemPerPage
+  const indexOfFirstCard = indexOfLastCard - itemPerPage
+
+  const handleChangePage = (page) => {
+    setPage(page)
+  }
+
+  useEffect(() => {
+    // 처음 데이터 로딩
+  }, [])
+
+  useEffect(() => {
+    // 데이터 변경 및 페이지 변경시 보여지는 데이터도 변경
+    setCurCardList(cards.slice(indexOfFirstCard, indexOfLastCard))
+  }, [page, cards])
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F9F9F9] md:flex-row">
@@ -107,11 +152,14 @@ const Audio = () => {
       {/* Content 영역 */}
       <div className="flex flex-1 flex-col">
         {/* Header를 카드 위로 배치 */}
-        <Header title="오디오북" />
+        <Header
+          title="오디오북"
+          icon={<img src={AudioIcon} alt="icon" className="h-7 w-7"></img>}
+        />
 
         {/* 카드 컨테이너 */}
         <div className="mt-4 flex flex-wrap justify-center gap-8 overflow-auto p-4">
-          {cards.map((card) => (
+          {curCardList.map((card) => (
             <Link
               to={`/summary-detail?id=${card.id}`} // 쿼리 파라미터 추가
               key={card.id}
@@ -126,6 +174,15 @@ const Audio = () => {
             </Link>
           ))}
         </div>
+        <Pagination
+          activePage={page}
+          itemsCountPerPage={itemPerPage}
+          totalItemsCount={cards.length}
+          pageRangeDisplayed={5}
+          prevPageText={'<'}
+          nextPageText={'>'}
+          onChange={handleChangePage}
+        />
       </div>
     </div>
   )
