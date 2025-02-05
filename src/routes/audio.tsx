@@ -4,6 +4,7 @@ import Card from '@/components/Card_box/card'
 import Sidebar from '@/components/chatbot/sidebar'
 import Header from '@/components/chatbot/chatbot_header'
 
+import AudioIcon from '@/assets/audio/AudioIcon.png'
 import Img1 from '@/assets/summary/page_3_img_1.png'
 import Img2 from '@/assets/summary/page_4_img_1.png'
 import Img3 from '@/assets/summary/page_4_img_2.png'
@@ -107,7 +108,10 @@ const Audio = () => {
       {/* Content 영역 */}
       <div className="flex flex-1 flex-col">
         {/* Header를 카드 위로 배치 */}
-        <Header title="오디오북" />
+        <Header
+          title="오디오북"
+          icon={<img src={AudioIcon} alt="icon" className="h-7 w-7"></img>}
+        />
 
         {/* 카드 컨테이너 */}
         <div className="mt-4 flex flex-wrap justify-center gap-8 overflow-auto p-4">
