@@ -50,6 +50,8 @@
     "react-chartjs-2": "^5.2.0",
     "react-component": "^0.0.0",
     "react-dom": "^18.2.0",
+    "react-h5-audio-player": "^3.10.0-rc.1",
+    "react-js-pagination": "^3.0.3",
     "react-modal": "^3.16.1",
     "react-pdf": "^9.2.1",
     "react-router-dom": "^6.21.3",
