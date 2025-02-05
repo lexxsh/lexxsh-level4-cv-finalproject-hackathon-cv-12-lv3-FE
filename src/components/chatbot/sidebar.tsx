@@ -30,7 +30,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div className="w-64 select-none bg-gray-100 text-black max-md:w-[32rem]">
+    <div className="w-100 flex select-none flex-row bg-gray-100 text-black md:w-64 md:flex-col">
       {/* 헤더 */}
       <div className="border-b border-gray-200 p-5">
         <img src={Header} alt="Header" />
@@ -46,11 +46,6 @@ const Sidebar = () => {
         <Link to="/summary">
           <div className="cursor-pointer transition-colors hover:bg-gray-200">
             <img src={Sum} alt="Sum" />
-          </div>
-        </Link>
-        <Link to="/audio">
-          <div className="cursor-pointer transition-colors hover:bg-gray-200">
-            <img src={Audio} alt="Audio" />
           </div>
         </Link>
 
