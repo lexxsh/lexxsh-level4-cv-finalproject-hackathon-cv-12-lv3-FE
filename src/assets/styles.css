@@ -1504,6 +1504,9 @@ select {
 .max-w-6xl {
   max-width: 72rem !important;
 }
+.max-w-\[200px\] {
+  max-width: 200px !important;
+}
 .max-w-\[40rem\] {
   max-width: 40rem !important;
 }
@@ -1515,18 +1518,6 @@ select {
 }
 .max-w-screen-sm {
   max-width: 640px !important;
-}
-.max-w-\[30px\] {
-  max-width: 30px !important;
-}
-.max-w-\[90px\] {
-  max-width: 90px !important;
-}
-.max-w-\[100px\] {
-  max-width: 100px !important;
-}
-.max-w-\[200px\] {
-  max-width: 200px !important;
 }
 .flex-1 {
   flex: 1 1 0% !important;
