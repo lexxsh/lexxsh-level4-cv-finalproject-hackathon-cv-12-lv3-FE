@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import Header from '@/assets/sidebar/header.png'
+import Header from '@/assets/friend.svg'
+import Header2 from '@/assets/text.svg'
 import New from '@/assets/sidebar/Frame1.svg'
 import Sum from '@/assets/sidebar/Frame2.svg'
 import Audio from '@/assets/sidebar/Frame3.svg'
@@ -32,9 +33,12 @@ const Sidebar = () => {
   return (
     <div className="w-100 flex select-none flex-row bg-gray-100 text-black md:w-64 md:flex-col">
       {/* 헤더 */}
-      <div className="border-b border-gray-200 p-5">
-        <img src={Header} alt="Header" />
-      </div>
+      <Link to="/">
+        <div className="flex items-center justify-center border-b border-gray-200 p-4">
+          <img src={Header} alt="Header" className="h-10 w-10" />
+          <img src={Header2} alt="Header" className="ml-2 mt-0 h-10 w-[150px]" />
+        </div>
+      </Link>
 
       {/* 메뉴 */}
       <div className="mt-3">

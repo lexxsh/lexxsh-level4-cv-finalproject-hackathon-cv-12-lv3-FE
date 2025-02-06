@@ -5,7 +5,7 @@ import Card from '@/components/Card_box/card'
 import Sidebar from '@/components/chatbot/sidebar'
 import Header from '@/components/chatbot/chatbot_header'
 import Pagination from 'react-js-pagination'
-
+import '@/assets/summary/pagination.css'
 import Img1 from '@/assets/summary/page_3_img_1.png'
 import Img2 from '@/assets/summary/page_4_img_1.png'
 import Img3 from '@/assets/summary/page_4_img_2.png'
@@ -77,7 +77,35 @@ const Summary = () => {
       image: Img3,
     },
     {
-      id: 10,
+      id: 11,
+      tags: ['#DQN', '#RL'],
+      title: 'Deep Q-Network',
+      description: '인공지능 - 강화 학습',
+      image: Img1,
+    },
+    {
+      id: 12,
+      tags: ['#DQN', '#RL'],
+      title: 'Deep Q-Network',
+      description: '인공지능 - 강화 학습',
+      image: Img1,
+    },
+    {
+      id: 13,
+      tags: ['#DQN', '#RL'],
+      title: 'Deep Q-Network',
+      description: '인공지능 - 강화 학습',
+      image: Img1,
+    },
+    {
+      id: 14,
+      tags: ['#DQN', '#RL'],
+      title: 'Deep Q-Network',
+      description: '인공지능 - 강화 학습',
+      image: Img1,
+    },
+    {
+      id: 15,
       tags: ['#DQN', '#RL'],
       title: 'Deep Q-Network',
       description: '인공지능 - 강화 학습',
@@ -98,7 +126,7 @@ const Summary = () => {
 
   useEffect(() => {
     setCurCardList(cards.slice(indexOfFirstCard, indexOfLastCard))
-  }, [page, cards])
+  }, [page])
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F9F9F9] md:flex-row">
@@ -119,15 +147,17 @@ const Summary = () => {
             />
           ))}
         </div>
-        <Pagination
-          activePage={page}
-          itemsCountPerPage={itemPerPage}
-          totalItemsCount={cards.length}
-          pageRangeDisplayed={5}
-          prevPageText={'<'}
-          nextPageText={'>'}
-          onChange={handleChangePage}
-        />
+        <div className="mt-4 flex justify-center">
+          <Pagination
+            activePage={page}
+            itemsCountPerPage={itemPerPage}
+            totalItemsCount={cards.length}
+            pageRangeDisplayed={5}
+            prevPageText={'<'}
+            nextPageText={'>'}
+            onChange={handleChangePage}
+          />
+        </div>
       </div>
     </div>
   )
