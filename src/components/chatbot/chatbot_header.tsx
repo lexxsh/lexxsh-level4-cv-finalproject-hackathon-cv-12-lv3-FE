@@ -6,7 +6,7 @@ interface HeaderProps {
   icon?: React.ReactNode
 }
 
-const Header: React.FC<HeaderProps> = ({ title, padding = 'p-[1.09rem]', icon }) => {
+const Header: React.FC<HeaderProps> = ({ title, padding = 'p-[1.3rem]', icon }) => {
   return (
     <div className={`select-none border-b border-gray-200 bg-white ${padding}`}>
       <h1 className="flex items-center text-xl font-bold">

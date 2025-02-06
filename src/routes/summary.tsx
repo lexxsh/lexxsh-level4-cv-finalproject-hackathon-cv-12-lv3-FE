@@ -6,7 +6,6 @@ import Sidebar from '@/components/chatbot/sidebar'
 import Header from '@/components/chatbot/chatbot_header'
 import Pagination from 'react-js-pagination'
 import '@/assets/summary/pagination.css'
-
 import Img1 from '@/assets/summary/page_3_img_1.png'
 import Img2 from '@/assets/summary/page_4_img_1.png'
 import Img3 from '@/assets/summary/page_4_img_2.png'
@@ -78,53 +77,46 @@ const Summary = () => {
       image: Img3,
     },
     {
-      id: 10,
+      id: 11,
       tags: ['#DQN', '#RL'],
       title: 'Deep Q-Network',
       description: '인공지능 - 강화 학습',
       image: Img1,
     },
     {
-      id: 11,
-      tags: ['#SVM', '#ML'],
-      title: 'Support Vector Machine',
-      description: '인공지능 - 머신러닝',
-      image: Img2,
-    },
-    {
       id: 12,
-      tags: ['#KNN', '#ML'],
-      title: 'K-Nearest Neighbors',
-      description: '인공지능 - 머신러닝',
-      image: Img3,
+      tags: ['#DQN', '#RL'],
+      title: 'Deep Q-Network',
+      description: '인공지능 - 강화 학습',
+      image: Img1,
     },
     {
       id: 13,
-      tags: ['#KNN', '#ML'],
-      title: 'K-Nearest Neighbors',
-      description: '인공지능 - 머신러닝',
+      tags: ['#DQN', '#RL'],
+      title: 'Deep Q-Network',
+      description: '인공지능 - 강화 학습',
       image: Img1,
     },
     {
       id: 14,
-      tags: ['#KNN', '#ML'],
-      title: 'K-Nearest Neighbors',
-      description: '인공지능 - 머신러닝',
-      image: Img2,
+      tags: ['#DQN', '#RL'],
+      title: 'Deep Q-Network',
+      description: '인공지능 - 강화 학습',
+      image: Img1,
     },
     {
       id: 15,
-      tags: ['#KNN', '#ML'],
-      title: 'K-Nearest Neighbors',
-      description: '인공지능 - 머신러닝',
-      image: Img3,
+      tags: ['#DQN', '#RL'],
+      title: 'Deep Q-Network',
+      description: '인공지능 - 강화 학습',
+      image: Img1,
     },
   ]
 
   const [page, setPage] = useState(1)
   const [curCardList, setCurCardList] = useState<any[]>([])
 
-  const itemPerPage = 12
+  const itemPerPage = 10
   const indexOfLastCard = page * itemPerPage
   const indexOfFirstCard = indexOfLastCard - itemPerPage
 
@@ -133,52 +125,39 @@ const Summary = () => {
   }
 
   useEffect(() => {
-    // 처음 데이터 로딩
-  }, [])
-
-  useEffect(() => {
-    // 데이터 변경 및 페이지 변경시 보여지는 데이터도 변경
     setCurCardList(cards.slice(indexOfFirstCard, indexOfLastCard))
-  }, [page, cards])
+  }, [page])
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F9F9F9] md:flex-row">
-      {/* Sidebar */}
       <div className="flex justify-center md:justify-start">
         <Sidebar />
       </div>
-
-      {/* Content 영역 */}
       <div className="flex flex-1 flex-col">
-        {/* Header를 카드 위로 배치 */}
         <Header title="요약" />
-
-        {/* 카드 컨테이너 */}
         <div className="mt-4 flex flex-wrap justify-center gap-8 overflow-auto p-4">
           {curCardList.map((card) => (
-            <Link
-              to={`/summary-detail?id=${card.id}`} // 쿼리 파라미터 추가
+            <Card
               key={card.id}
-              className="block" // Link가 블록 요소로 동작하도록 설정
-            >
-              <Card
-                tags={card.tags} // 태그 배열 전달
-                title={card.title} // 제목 전달
-                description={card.description}
-                image={card.image} // 설명 전달
-              />
-            </Link>
+              tags={card.tags}
+              title={card.title}
+              description={card.description}
+              image={card.image}
+              id={card.id}
+            />
           ))}
         </div>
-        <Pagination
-          activePage={page}
-          itemsCountPerPage={itemPerPage}
-          totalItemsCount={cards.length}
-          pageRangeDisplayed={5}
-          prevPageText={'<'}
-          nextPageText={'>'}
-          onChange={handleChangePage}
-        />
+        <div className="mt-4 flex justify-center">
+          <Pagination
+            activePage={page}
+            itemsCountPerPage={itemPerPage}
+            totalItemsCount={cards.length}
+            pageRangeDisplayed={5}
+            prevPageText={'<'}
+            nextPageText={'>'}
+            onChange={handleChangePage}
+          />
+        </div>
       </div>
     </div>
   )

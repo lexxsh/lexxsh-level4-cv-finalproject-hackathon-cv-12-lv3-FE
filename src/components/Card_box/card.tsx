@@ -1,6 +1,7 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
-const Card = ({ tags, title, description, image }) => {
+const Card = ({ tags, title, description, image, id }) => {
   return (
     <div className="flex h-[20rem] w-[12rem] flex-col rounded-2xl border bg-white p-4 shadow">
       {/* 이미지 섹션 (고정 크기) */}
@@ -13,7 +14,7 @@ const Card = ({ tags, title, description, image }) => {
       </div>
 
       {/* 태그 섹션 */}
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="mt-3 flex flex-row gap-2">
         {tags.map((tag, index) => (
           <span
             key={index}
@@ -25,8 +26,28 @@ const Card = ({ tags, title, description, image }) => {
       </div>
 
       {/* 텍스트 섹션 */}
-      <p className="text-m mt-2 line-clamp-2 text-gray-700">{title}</p>
+      <div className="mt-4 min-h-[3rem]">
+        <p className="text-m line-clamp-2 text-gray-700">{title}</p>
+      </div>
       <p className="mt-1 line-clamp-1 text-sm text-gray-400">{description}</p>
+
+      {/* 버튼 섹션 */}
+      <div className="mt-3 flex justify-between">
+        <Link
+          to={`/summary-detail?id=${id}`}
+          className="text-sm font-semibold hover:opacity-50"
+          style={{ color: '#0069FF' }}
+        >
+          오디오 북
+        </Link>
+        <Link
+          to={`/summary-main?id=${id}`}
+          className="text-sm font-semibold hover:opacity-50"
+          style={{ color: '#0069FF' }}
+        >
+          상세보기
+        </Link>
+      </div>
     </div>
   )
 }
