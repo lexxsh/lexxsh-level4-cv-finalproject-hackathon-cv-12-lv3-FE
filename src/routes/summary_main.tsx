@@ -76,7 +76,7 @@ const SummaryMain = () => {
     { id: 'results', title: '결과', icon: '🏆' },
     { id: 'timeline', title: '타임라인', icon: '⏳' },
     { id: 'figures', title: 'Figure 알아보기', icon: '🖼️' },
-    { id: 'benchmark', title: '벤치마크', icon: '📊' },
+    { id: 'benchmark', title: '테이블로 보는 벤치마크', icon: '📊' },
   ]
 
   const splitSummaryByTag = (longSummary) => {
@@ -137,6 +137,7 @@ const SummaryMain = () => {
 
         switch (key) {
           case 'figures':
+            console.log(data.figures)
             setFigures(data.figures)
             break
           case 'summary':
@@ -171,19 +172,7 @@ const SummaryMain = () => {
   useEffect(() => {
     fetchData()
   }, [])
-  const renderTable = (table) => {
-    const { caption_number, description, table_obj } = table
-    return (
-      <div className="mt-4 rounded-lg border p-4">
-        <h3 className="text-lg font-semibold text-gray-700">
-          Table {caption_number}: {description}
-        </h3>
-        <div className="prose mt-2">
-          <div dangerouslySetInnerHTML={{ __html: marked(table_obj) }} />
-        </div>
-      </div>
-    )
-  }
+
   const toggleExpand = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index)
   }
@@ -229,7 +218,7 @@ const SummaryMain = () => {
                 <img
                   src={`data:image/png;base64,${figures[0].image}`}
                   alt={`Figure ${figures[0].figure_number}`}
-                  className="w-full rounded"
+                  className="max-h-[400px] w-full rounded object-contain"
                 />
               )}
             </div>
@@ -335,18 +324,16 @@ const SummaryMain = () => {
                     <img
                       src={`data:image/png;base64,${figure.image}`}
                       alt={`Figure ${figure.figure_number}`}
-                      className="w-full rounded"
+                      className="max-h-[500px] w-full rounded object-contain"
                     />
 
-                    {/* Figure 설명 (기본 3줄 제한) */}
-                    <p
-                      className={`mt-2 text-base text-gray-600 ${
-                        !isExpanded ? 'line-clamp-3' : ''
-                      }`}
-                      style={{ whiteSpace: 'pre-line' }}
-                    >
-                      <strong>Figure {figure.figure_number}.</strong> {figure.caption_info}
-                    </p>
+                    {figure.caption_image && (
+                      <img
+                        src={`data:image/png;base64,${figure.caption_image}`}
+                        alt={`Caption Figure ${figure.table_number}`}
+                        className="mt-2 max-h-[100px] w-full rounded object-contain"
+                      />
+                    )}
 
                     {/* Description 설명 (기본 3줄 제한) */}
                     {figure.description && (
@@ -392,11 +379,29 @@ const SummaryMain = () => {
               id="benchmark"
               className="mt-8 flex scroll-mt-20 items-center text-xl font-semibold"
             >
-              📊 벤치마크
+              📊 테이블로 보는 벤치마크
             </h2>
             <div className="mt-4 overflow-x-auto">
               <div className="prose max-w-none text-lg">
-                {benchmarkTables.map((table, index) => renderTable(table))}
+                {benchmarkTables.map((table, index) => (
+                  <div key={index} className="mb-4 w-full rounded-lg border p-4">
+                    {/* 기본 이미지 */}
+
+                    <img
+                      src={`data:image/png;base64,${table.image}`}
+                      alt={`Figure ${table.table_number}`}
+                      className="max-h-[300px] w-full rounded object-contain"
+                    />
+                    {/* 캡션 이미지 (옵션) */}
+                    {table.caption_image && (
+                      <img
+                        src={`data:image/png;base64,${table.caption_image}`}
+                        alt={`Caption Figure ${table.table_number}`}
+                        className="mt-2 max-h-[100px] w-full rounded object-contain"
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

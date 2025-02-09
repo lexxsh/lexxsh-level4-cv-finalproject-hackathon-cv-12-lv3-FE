@@ -7,7 +7,7 @@ const Card = ({ tags, title, description, image, id }) => {
       {/* 이미지 섹션 (고정 크기) */}
       <div className="h-[8rem] w-full">
         <img
-          src={Img} // props로 받은 이미지 경로 사용
+          src={image || Img} // props로 받은 이미지 경로 사용
           alt="Preview"
           className="h-full w-full rounded-lg object-cover"
         />
@@ -18,9 +18,9 @@ const Card = ({ tags, title, description, image, id }) => {
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="w-fit whitespace-nowrap rounded-md bg-[rgba(153,197,255,0.25)] px-2 py-1 text-sm font-medium text-[#0069FF]"
+            className="w-fit max-w-full truncate whitespace-nowrap rounded-md bg-[rgba(153,197,255,0.25)] px-2 py-1 text-sm font-medium text-[#0069FF]"
           >
-            {tag}
+            #{tag}
           </span>
         ))}
       </div>
