@@ -11,28 +11,213 @@ import S2 from '@/assets/chat/s2.svg'
 import S3 from '@/assets/chat/s3.svg'
 import S4 from '@/assets/chat/s4.svg'
 import S5 from '@/assets/chat/s5.svg'
-import { ClipLoader } from 'react-spinners' // react-spinners 라이브러리에서 ClipLoader 가져오기
+import { ClipLoader, MoonLoader } from 'react-spinners'
+import { useNavigate, useParams } from 'react-router-dom' // useParams 추가
 
-const ChatSection = () => {
-  const [messages, setMessages] = useState([
-    {
-      text: 'The question of whether androids dream of electric sheep is the title and central theme of the science fiction novel Do Androids Dream of Electric Sheep? by Philip K. Dick.',
-      isUser: false,
-      timestamp: '02:22 AM',
-      // 각 메시지별 아이콘 상태를 개별적으로 관리 (초기값 false: S4 아이콘 표시)
-      iconChanged: false,
-    },
-  ])
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+const ChatSection = ({ setIsChatReady, toast }) => {
+  const navigate = useNavigate()
+  const { fileId } = useParams()
+  const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState('')
   const [svgColor, setSvgColor] = useState('#000000')
   const [showScrollButton, setShowScrollButton] = useState(false)
-  const [isSending, setIsSending] = useState(false) // 메시지 전송 및 타이핑 효과 진행 여부
-  // sendButtonState: 'normal' | 'spinner' | 'stop'
+  const [isSending, setIsSending] = useState(false)
   const [sendButtonState, setSendButtonState] = useState('normal')
+  const [isLoading, setIsLoading] = useState(false)
+
   const messagesEndRef = useRef(null)
   const textareaRef = useRef(null)
   const chatContainerRef = useRef(null)
-  const typeIntervalRef = useRef(null) // 타이핑 효과 타이머 참조
+  const typeIntervalRef = useRef(null)
+  const fullResponseRef = useRef('')
+
+  // 챗봇 준비 함수
+  const prepareChatbot = async () => {
+    const localfileId = localStorage.getItem('FileId')
+    if (!localfileId) {
+      toast.error('PDF를 먼저 업로드해주세요!')
+      return
+    }
+
+    const chatbotToastId = toast.loading('⏳ 챗봇을 준비중...')
+    const tableToastId = toast.loading('⏳ 테이블/그림 데이터를 준비중...')
+    const summaryToastId = toast.loading('⏳ PDF 요약을 진행 중...')
+
+    try {
+      // 두 API 요청을 병렬로 실행
+      const chatbotPromise = fetch('http://127.0.0.1:8000/chat-bot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pdf_id: localfileId, user_id: 'admin' }),
+      })
+
+      const tableFigurePromise = fetch('http://127.0.0.1:8001/table-figure', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pdf_id: localfileId, user_id: 'admin' }),
+      })
+
+      const summarizePromise = fetch('http://127.0.0.1:8002/pdf/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pdf_id: localfileId, user_id: 'admin' }),
+      })
+
+      try {
+        const chatbotResponse = await chatbotPromise
+        const chatbotData = await chatbotResponse.json()
+
+        if (chatbotData.success) {
+          setIsChatReady(true)
+          setMessages([
+            {
+              text: chatbotData.message,
+              isUser: false,
+              timestamp: new Date().toLocaleTimeString(),
+            },
+          ])
+          toast.update(chatbotToastId, {
+            render: '✅ 챗봇이 준비되었습니다!',
+            type: 'success',
+            isLoading: false,
+            autoClose: 3000,
+          })
+          navigate(`/chat/${localfileId}`)
+        } else {
+          toast.update(chatbotToastId, {
+            render: `⚠️ 챗봇 준비 실패: ${chatbotData.message}`,
+            type: 'error',
+            isLoading: false,
+            autoClose: 3000,
+          })
+        }
+      } catch (error) {
+        console.error('챗봇 준비 중 오류:', error)
+        toast.update(chatbotToastId, {
+          render: '🚨 챗봇 준비 중 오류 발생!',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        })
+      }
+
+      try {
+        const tableFigureResponse = await tableFigurePromise
+        const tableFigureData = await tableFigureResponse.json()
+
+        if (tableFigureData.success) {
+          toast.update(tableToastId, {
+            render: '✅ 테이블/그림 준비 완료!',
+            type: 'success',
+            isLoading: false,
+            autoClose: 3000,
+          })
+        } else {
+          toast.update(tableToastId, {
+            render: `⚠️ 테이블/그림 준비 실패: ${tableFigureData.message}`,
+            type: 'error',
+            isLoading: false,
+            autoClose: 3000,
+          })
+        }
+      } catch (error) {
+        console.error('테이블/그림 준비 중 오류:', error)
+        toast.update(tableToastId, {
+          render: '🚨 테이블/그림 준비 중 오류 발생!',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        })
+      }
+      try {
+        const summarizeResponse = await summarizePromise
+        const summarizeData = await summarizeResponse.json()
+
+        if (summarizeData.success) {
+          toast.update(summaryToastId, {
+            render: '✅ PDF 요약 완료!',
+            type: 'success',
+            isLoading: false,
+            autoClose: 3000,
+          })
+        } else {
+          toast.update(summaryToastId, {
+            render: `⚠️ PDF 요약 실패: ${summarizeData.message}`,
+            type: 'error',
+            isLoading: false,
+            autoClose: 3000,
+          })
+        }
+      } catch (error) {
+        console.error('PDF 요약 중 오류:', error)
+        toast.update(summaryToastId, {
+          render: '🚨 PDF 요약 중 오류 발생!',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        })
+      }
+    } catch (error) {
+      console.error('예상치 못한 오류:', error)
+    }
+  }
+
+  // URL에 fileId가 있을 때만 챗봇 히스토리 요청
+  const getChatHistory = async () => {
+    if (!fileId) {
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      const response = await fetch('http://127.0.0.1:8000/pdf/get_chat_hist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pdf_id: fileId, user_id: 'admin' }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          const chatHistory = data.chat_hist
+          const formattedMessages = chatHistory.map(
+            ([id, sender, message, timestamp, iconChanged]) => ({
+              text: message,
+              isUser: sender === 'user', // 'user'이면 true, 'assistant'이면 false
+              timestamp: new Date(timestamp).toLocaleTimeString(),
+              iconChanged,
+            }),
+          )
+
+          setMessages(formattedMessages)
+        } else {
+          toast.error('⚠️ 채팅 히스토리를 불러오는 데 실패했습니다.')
+        }
+      } else {
+        throw new Error('채팅 히스토리 불러오기 실패')
+      }
+    } catch (error) {
+      console.error('채팅 히스토리 요청 중 오류 발생:', error)
+      toast.error('🚨 채팅 히스토리 요청 중 오류 발생!')
+    } finally {
+      setIsLoading(false) // 로딩 종료
+    }
+  }
+
+  useEffect(() => {
+    if (!fileId) {
+      prepareChatbot()
+      console.log('no fileID')
+    } else {
+      getChatHistory()
+      console.log('yes fileID')
+    }
+  }, [fileId])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -67,14 +252,31 @@ const ChatSection = () => {
     }
   }, [messages])
 
-  const handleSendMessage = () => {
+  const handleStopGeneration = () => {
+    if (typeIntervalRef.current) {
+      clearInterval(typeIntervalRef.current)
+    }
+
+    setMessages((prev) => {
+      const newMessages = [...prev]
+      const lastIndex = newMessages.length - 1
+      newMessages[lastIndex] = {
+        ...newMessages[lastIndex],
+        text: fullResponseRef.current,
+      }
+      return newMessages
+    })
+
+    setIsSending(false)
+    setSendButtonState('normal')
+  }
+
+  const handleSendMessage = async () => {
     if (inputText.trim() === '') return
 
-    // 메시지 전송 중 처리 시작
     setIsSending(true)
-    setSendButtonState('spinner') // 처음 2초 동안 스피너 표시
+    setSendButtonState('spinner')
 
-    // 사용자 메시지 추가
     const userMessage = {
       text: inputText,
       isUser: true,
@@ -86,45 +288,83 @@ const ChatSection = () => {
     }
     setMessages((prev) => [...prev, userMessage])
 
-    // 봇 메시지를 빈 문자열로 미리 추가 (타이핑 효과 진행)
     const newBotMessage = {
-      text: '', // 이후 타이핑 효과로 채워질 예정
+      text: '',
       isUser: false,
       timestamp: new Date().toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true,
       }),
-      iconChanged: false, // 해당 메시지의 아이콘 상태
+      iconChanged: false,
     }
     setMessages((prev) => [...prev, newBotMessage])
 
-    const fullBotResponse = `You said: "${inputText}"`
+    try {
+      const userId = 'admin'
 
-    // 2초 동안 스피너 표시 후 타이핑 효과 시작
-    setTimeout(() => {
-      setSendButtonState('stop')
-      let currentCharIndex = 0
-      typeIntervalRef.current = setInterval(() => {
-        currentCharIndex++
-        // 마지막 메시지(방금 추가한 봇 메시지)를 업데이트
-        setMessages((prev) => {
-          const newMessages = [...prev]
-          const lastIndex = newMessages.length - 1
-          newMessages[lastIndex] = {
-            ...newMessages[lastIndex],
-            text: fullBotResponse.slice(0, currentCharIndex),
+      if (!fileId) {
+        alert('PDF ID가 없습니다! 아직 PDF가 업로드 진행중입니다!')
+        return
+      }
+
+      const response = await fetch('http://127.0.0.1:8003/chat-bot/message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pdf_id: fileId,
+          user_id: userId,
+          message: inputText,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('챗봇에 메시지를 전송하는 데 실패했습니다.')
+      }
+
+      const data = await response.json()
+      const fullBotResponse = data.data.message || '챗봇에 메시지를 전송하는 데 실패했습니다.'
+
+      fullResponseRef.current = fullBotResponse
+
+      // 타이핑 효과 구현
+      setTimeout(() => {
+        setSendButtonState('stop')
+        let currentCharIndex = 0
+        typeIntervalRef.current = setInterval(() => {
+          currentCharIndex++
+          setMessages((prev) => {
+            const newMessages = [...prev]
+            const lastIndex = newMessages.length - 1
+            newMessages[lastIndex] = {
+              ...newMessages[lastIndex],
+              text: fullBotResponse.slice(0, currentCharIndex),
+            }
+            return newMessages
+          })
+
+          if (currentCharIndex === fullBotResponse.length) {
+            clearInterval(typeIntervalRef.current)
+            setIsSending(false)
+            setSendButtonState('normal')
           }
-          return newMessages
-        })
-
-        if (currentCharIndex === fullBotResponse.length) {
-          clearInterval(typeIntervalRef.current)
-          setIsSending(false)
-          setSendButtonState('normal')
-        }
-      }, 50) // 50ms 간격으로 한 글자씩 추가
-    }, 2000) // 처음 2초 동안 스피너 표시
+        }, 50)
+      }, 2000)
+    } catch (error) {
+      console.error('챗봇에 메시지를 전송하는 중 오류 발생:', error)
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: '메시지 전송 오류. 다시 시도해 주세요.',
+          isUser: false,
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ])
+      setIsSending(false)
+      setSendButtonState('normal')
+    }
 
     setInputText('')
     if (textareaRef.current) {
@@ -132,17 +372,14 @@ const ChatSection = () => {
     }
   }
 
-  // 각 봇 메시지의 텍스트를 복사하도록 수정: 해당 메시지의 텍스트를 인자로 받음
   const handleCopyToClipboard = (text) => {
     navigator.clipboard.writeText(text)
     alert('메시지 내용이 복사되었습니다.')
   }
 
-  // 각 메시지의 S4 아이콘 클릭 시 해당 메시지의 아이콘을 S5로 변경 (한 번 변경되면 더 이상 안 바뀜)
   const handleIconChange = (messageIndex) => {
     setMessages((prevMessages) =>
       prevMessages.map((msg, i) => {
-        // 봇 메시지이며 아직 iconChanged가 false인 경우에만 변경
         if (i === messageIndex && !msg.iconChanged) {
           return { ...msg, iconChanged: true }
         }
@@ -154,7 +391,11 @@ const ChatSection = () => {
   return (
     <div className="flex flex-1 flex-col bg-gray-50">
       <Header title="Chat" />
-
+      {isLoading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-400 bg-opacity-50">
+          <MoonLoader size={50} color="#fff" />
+        </div>
+      )}
       <div
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto rounded-lg bg-white p-2 shadow-lg"
@@ -175,7 +416,6 @@ const ChatSection = () => {
               />
               <p className="mt-1 text-xs text-gray-400">{message.timestamp}</p>
             </div>
-
             <div
               className={`${
                 message.isUser
@@ -184,7 +424,6 @@ const ChatSection = () => {
               } overflow-wrap-anywhere whitespace-pre-wrap break-words text-sm`}
             >
               <p className="break-all">{message.text}</p>
-              {/* 봇 메시지인 경우 아이콘 그룹 표시 */}
               {!message.isUser && (
                 <div className="mt-4 flex select-none gap-2">
                   <img src={S1} alt="S1" className="w-5 cursor-pointer hover:opacity-60" />
@@ -196,7 +435,6 @@ const ChatSection = () => {
                   />
                   <img src={S3} alt="S3" className="w-5 cursor-pointer hover:opacity-60" />
                   <img
-                    // 해당 메시지의 iconChanged 상태에 따라 S4 또는 S5 표시
                     src={message.iconChanged ? S5 : S4}
                     alt={message.iconChanged ? 'S5' : 'S4'}
                     className="w-5 cursor-pointer hover:opacity-60"
@@ -226,30 +464,20 @@ const ChatSection = () => {
             placeholder="Message SummarAI..."
             className="max-h-40 flex-1 resize-none overflow-auto rounded-3xl border border-gray-300 p-3 pl-4 pr-12 shadow-md focus:ring-0"
           />
-          <div className="absolute bottom-3 right-3">
+          <button onClick={handleSendMessage} className="absolute bottom-3 right-3">
             {sendButtonState === 'spinner' ? (
-              // spinner 상태: 처음 2초 동안 ClipLoader 표시
-              <ClipLoader color="#22c8ff" loading={true} size={40} />
+              <ClipLoader size={35} color="#0063F7" />
             ) : sendButtonState === 'stop' ? (
-              // 타이핑 진행 중: Stop 아이콘 표시
               <img
                 src={Stop}
-                alt="Stop button"
+                alt="Stop"
+                onClick={handleStopGeneration}
                 className="cursor-pointer px-0"
-                onClick={() => {
-                  /* 필요 시 타이핑 중지 기능 구현 */
-                }}
               />
             ) : (
-              // 정상 상태: Button 아이콘 표시
-              <img
-                src={Button}
-                alt="Send button"
-                className="cursor-pointer px-0"
-                onClick={handleSendMessage}
-              />
+              <img src={Button} alt="Send" className="cursor-pointer px-0" />
             )}
-          </div>
+          </button>
         </div>
         <p className="mt-2 text-center text-xs text-gray-500">
           SummarAI can make mistakes. Check our{' '}
@@ -259,15 +487,6 @@ const ChatSection = () => {
           .
         </p>
       </div>
-
-      {showScrollButton && (
-        <button
-          className="fixed bottom-[130px] right-5 flex h-12 w-12 items-center justify-center rounded-full border border-gray-300 bg-white text-black hover:bg-gray-100 focus:ring-0"
-          onClick={scrollToBottom}
-        >
-          ↓
-        </button>
-      )}
     </div>
   )
 }

@@ -22,9 +22,12 @@ export default function App() {
           <Route path="main" element={<MainPage />} />
           <Route path="upload" element={<UploadPage />} />
           <Route path="chat" element={<ChatPage />} />
+          <Route path="chat/:fileId" element={<ChatPage />} />
           <Route path="summary" element={<SummaryPage />} />
           <Route path="summary-detail" element={<Detail />} />
+          <Route path="summary-detail/:fileId" element={<Detail />} />
           <Route path="summary-main" element={<SummaryMain />} />
+          <Route path="summary-main/:fileId" element={<SummaryMain />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
