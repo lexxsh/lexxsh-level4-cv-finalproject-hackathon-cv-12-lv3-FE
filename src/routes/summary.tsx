@@ -7,6 +7,8 @@ import Pagination from 'react-js-pagination'
 import '@/assets/summary/pagination.css'
 import { ToastManager } from '@/components/Loading/loading'
 import { BarLoader } from 'react-spinners'
+import Img from '@/assets/summary/default.png'
+
 const Summary = () => {
   const [page, setPage] = useState(1)
   const [curCardList, setCurCardList] = useState<any[]>([])
@@ -15,13 +17,30 @@ const Summary = () => {
   const [summaryInfo, setSummaryInfo] = useState<any>(null) // get_all_summary_info 결과 저장
   const [audioData, setAudioData] = useState<string | null>(null) // 🎵 오디오 데이터 상태
   const [loading, setLoading] = useState(true)
-  const itemPerPage = 10
+  const [itemPerPage, setItemPerPage] = useState(10)
   const indexOfLastCard = page * itemPerPage
   const indexOfFirstCard = indexOfLastCard - itemPerPage
 
   const handleChangePage = (page) => {
     setPage(page)
   }
+  const adjustItemsPerPage = () => {
+    const width = window.innerWidth
+    if (width >= 1400) {
+      setItemPerPage(10)
+    } else if (width >= 1200) {
+      setItemPerPage(8)
+    } else if (width >= 650) {
+      setItemPerPage(6)
+    } else {
+      setItemPerPage(4)
+    }
+  }
+  useEffect(() => {
+    adjustItemsPerPage() // Adjust the items per page on initial load
+    window.addEventListener('resize', adjustItemsPerPage) // Add resize listener
+    return () => window.removeEventListener('resize', adjustItemsPerPage) // Clean up the listener
+  }, [])
 
   useEffect(() => {
     // content 안에 있는 모든 json_data에서 데이터를 가져옵니다.
@@ -48,7 +67,7 @@ const Summary = () => {
           tags: data?.tags.slice(0, 2) || [], // tags
           title: data?.paper_info?.title || '제목 없음', // title
           description: description || '연구분야 정보를 찾을 수 없습니다.', // 기본 description 설정
-          image: files?.thumbnail || '', // 첫 번째 이미지 url로 설정
+          image: `data:image/png;base64,${files?.thumbnail || ''}` || Img, // 첫 번째 이미지 url로 설정
           paperid: data?.paper_info?.paper_id,
         }
       })
@@ -59,7 +78,7 @@ const Summary = () => {
     if (summaryInfo?.content) {
       extractCardData()
     }
-  }, [page, summaryInfo]) // page와 summaryInfo가 변경될 때마다 호출
+  }, [page, summaryInfo, itemPerPage]) // page와 summaryInfo가 변경될 때마다 호출
 
   // 📌 PDF ID 가져오기 + 이후 summary info 요청
   useEffect(() => {
@@ -125,7 +144,7 @@ const Summary = () => {
           </div>
         ) : (
           <>
-            <div className="mt-4 flex flex-wrap justify-center gap-8 overflow-auto p-4">
+            <div className="mt-4 flex max-w-[1300px] flex-wrap  items-center justify-center gap-8 overflow-auto p-4">
               {curCardList.map((card) => (
                 <Card
                   key={card.id}
@@ -137,7 +156,7 @@ const Summary = () => {
                 />
               ))}
             </div>
-            <div className="mt-4 flex justify-center">
+            <div className="mt-4 flex  max-w-[1300px] justify-center">
               <Pagination
                 activePage={page}
                 itemsCountPerPage={itemPerPage}
